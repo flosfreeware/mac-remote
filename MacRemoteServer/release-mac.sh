@@ -144,7 +144,8 @@ fi
 restore_pending_artifact "$pkg" pkg
 notarize_artifact "$pkg" pkg
 /usr/sbin/spctl --assess --type install "$pkg"
-# The website uses this stable name through GitHub's /releases/latest URL.
+/usr/sbin/pkgutil --check-signature "$pkg"
+# The website serves this stable name from docs/downloads/ through GitHub Pages.
 # The versioned package remains in dist for archival and diagnostics.
 /bin/cp "$pkg" "$stable_pkg"
 
@@ -164,8 +165,8 @@ cat > "$dist/README.txt" <<EOF
 Created locally. Nothing was uploaded or pushed.
 
 Manual release steps:
-1. prepare-release.sh copies Mac-Remote.pkg, Mac-Remote-${version}.zip, update.json, and the website download link into the local public site checkout.
-2. Commit and push that public site checkout yourself. Your private source repository stays private.
+1. prepare-release.sh copies Mac-Remote.pkg, Mac-Remote-${version}.zip, and update.json into docs/ in this repository and creates the local release commit and tag.
+2. Type 'push' at its prompt, or push the commit and tag yourself, to publish through GitHub Pages.
 EOF
 rm -f "$notary_state_directory/${version}-${build}-app.submission" \
       "$notary_state_directory/${version}-${build}-app.artifact" \

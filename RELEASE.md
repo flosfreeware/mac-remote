@@ -1,70 +1,64 @@
 # Mac Remote release workflow
 
-This repository deliberately does **not** publish, push, create GitHub releases,
-or modify GitHub Pages automatically.
+Run development and releases from this checkout: `mac-remote-public`.
+The source, website, and downloadable Mac artifacts now live in the same
+`flosfreeware/mac-remote` repository. The old checkouts are not needed.
 
-## Daily development
+## Development
 
-- Use `./rebuild-install.sh` for the development build on the connected iPhone.
-- The production app can stay installed in `/Applications/Mac Remote.app` while
-  development builds run from the repository's build folder.
-- To remove only the production app, run `./uninstall-production.sh`.
-- Run `./uninstall-production.sh --erase-data` only when testing a brand-new
-  Mac install. It removes Mac Remote's pairing Keychain entries, preferences,
-  and local diagnostics after confirmation.
+- `pnpm dev` rebuilds, installs, and restarts the Mac and connected iPhone apps.
+- `pnpm dev:setup` also resets the Mac setup-completed preference.
+- Machine-specific signing settings and the iPhone ID belong in the ignored
+  `.release-config.sh`. Notarization credentials remain in Keychain.
 
-## Create a local production release
+## Prepare and publish a release
 
-Keep machine-specific signing identity names and the notary profile name in
-the ignored `.release-config.sh` file. Start from the example once and edit it
-for this Mac; the notary password remains in Keychain.
+Run:
 
-The preferred command stages every non-ignored source-repository change,
-updates both app version numbers, creates a local commit and annotated tag, and
-creates the signed/notarized Mac artifacts. It also copies a sanitized snapshot
-of tracked source files and the release files into the separate clean-history
-public checkout at `../mac-remote-public`, under `docs/`. It never pushes or
-publishes:
-
-```zsh
-cp .release-config.example.sh .release-config.sh
-# Edit .release-config.sh once for this Mac, then run:
-./prepare-release.sh 1.1 2
+```sh
+pnpm release
 ```
 
-The arguments are the public version and build number. This command stages all
-non-ignored changes because a release must exactly match its local tag. Git
-ignore still excludes signing material, diagnostics, and build products.
-If notarization is interrupted after upload, rerunning the same command polls
-the saved Apple submission and staples the saved artifact rather than uploading
-another copy.
+The command shows local release history and current version numbers, then asks
+for the next version and build. Use a version that has no existing release tag;
+the build number must increase.
 
-The public checkout must be clean before running. It must be the
-`flosfreeware/mac-remote` repository. Set `PUBLIC_REPOSITORY` only if it lives
-somewhere other than the default `../mac-remote-public`.
+It stages all non-ignored changes, updates the Mac/iPhone/widget versions, and
+creates a local source commit. It builds and signs the Mac app and installer,
+notarizes them, verifies the installer signature, and prepares:
 
-If you need to produce artifacts for an already committed/tagged release, use
-the lower-level script instead:
+- `docs/downloads/Mac-Remote.pkg`: the website's installer.
+- `docs/downloads/Mac-Remote-VERSION.zip`: the Mac updater's download.
+- `docs/update.json`: the update manifest.
 
-```zsh
+It commits those website files and tags the completed release. If signing or
+notarization fails before the tag is created, rerun with the same version/build
+to resume the saved notarization submission.
+
+At the final prompt, type exactly `push` to publish. Any other answer keeps the
+release local. You can publish later yourself:
+
+```sh
+git push origin HEAD
+git push origin vVERSION
+```
+
+GitHub Pages deploys the contents of `docs/`. Once deployment finishes, the
+download button serves the new PKG and the Mac updater reads the new manifest.
+A GitHub Release is optional; the website hosts these downloads directly.
+
+Test the downloaded installer, Accessibility setup, pairing, and an in-app
+update before submitting the matching iPhone build. The iPhone App Store
+submission is a separate Xcode/App Store Connect step.
+
+## Rebuild artifacts without a new release commit
+
+For an already committed release:
+
+```sh
 cd MacRemoteServer
-./release-mac.sh 'https://flosfreeware.github.io/mac-remote/downloads/Mac-Remote-1.1.zip'
+./release-mac.sh 'https://flosfreeware.github.io/mac-remote/downloads/Mac-Remote-VERSION.zip'
 ```
 
-The script creates `MacRemoteServer/dist/` with a notarized PKG, an updater ZIP
-containing the stapled, notarized app, `update.json`, and a manual-release
-checklist. It no longer creates a DMG and does not contact GitHub.
-
-## Manual publication
-
-1. Push the release commit/tag to `covyy/mac-remote`, which remains your
-   private source repository.
-2. Push the prepared clean-history commit in `flosfreeware/mac-remote`.
-   GitHub Pages then serves the installer, ZIP, and `update.json` from `docs/`.
-3. Download the public PKG on a clean Mac account and test installation,
-   first-run Accessibility setup, Login Item registration, QR pairing, and an
-   in-app update before submitting the matching iPhone build.
-
-The installer launches Mac Remote after installing it. Mac Remote then shows
-its first-run setup: Accessibility permission first, followed by the pairing
-QR code. macOS requires the user to approve Accessibility directly.
+This only prepares local artifacts under `MacRemoteServer/dist/`; it does not
+publish them or change the website's downloads.

@@ -1,5 +1,5 @@
 #!/bin/zsh
-# Prepare a release in the private source checkout and clean-history public checkout without publishing.
+# Prepare source, website downloads, and a release tag in this checkout.
 # It intentionally stages every non-ignored source-repository change.
 set -euo pipefail
 
@@ -15,7 +15,6 @@ if [[ ! "$version" =~ '^[0-9]+\.[0-9]+(\.[0-9]+)?$' ]] || [[ ! "$build" =~ '^[1-
 fi
 
 tag="v${version}"
-public_repository="${PUBLIC_REPOSITORY:-$root/../mac-remote-public}"
 release_url="https://flosfreeware.github.io/mac-remote/downloads/Mac-Remote-${version}.zip"
 
 if [[ -n "$(git diff --name-only --diff-filter=U)" ]]; then
@@ -26,20 +25,10 @@ if git rev-parse -q --verify "refs/tags/${tag}" >/dev/null; then
   echo "The local tag ${tag} already exists. Choose a new version or remove that tag deliberately." >&2
   exit 2
 fi
-if [[ ! -d "$public_repository/.git" ]]; then
-  echo "Public checkout not found at: ${public_repository}" >&2
-  echo "Clone flosfreeware/mac-remote there, or set PUBLIC_REPOSITORY." >&2
-  exit 2
-fi
-public_remote="$(git -C "$public_repository" remote get-url origin)"
+public_remote="$(git remote get-url origin)"
 if [[ "$public_remote" != "https://github.com/flosfreeware/mac-remote.git" && \
       "$public_remote" != "git@github.com:flosfreeware/mac-remote.git" ]]; then
   echo "Refusing to publish to unexpected public repository remote: ${public_remote}" >&2
-  exit 2
-fi
-if [[ -n "$(git -C "$public_repository" status --porcelain)" ]]; then
-  echo "Refusing to overwrite changes in the public checkout: ${public_repository}" >&2
-  echo "Commit or stash those changes, then run this script again." >&2
   exit 2
 fi
 
@@ -85,58 +74,41 @@ fi
   ./release-mac.sh "$release_url"
 )
 
-git tag -a "$tag" -m "Mac Remote ${version} (${build})"
-
-# Copy tracked files only, never the private repository's Git history or
-# ignored/local files. Keep the public README, security page, and release
-# downloads owned by the public checkout. Diagnostics are intentionally omitted.
-while IFS= read -r -d '' source_path; do
-  case "$source_path" in
-    README.md|RELEASE.md|release.sh|prepare-release.sh|.release-config.sh|.env|.env.*|\
-    diagnostics/*|docs/downloads/*|MacRemoteServer/build/*|MacRemoteServer/dist/*|\
-    MacRemoteServer/.release-state/*|build/*|.build/*|DerivedData/*|node_modules/*|.pnpm-store/*|\
-    *.p12|*.pfx|*.mobileprovision|*.provisionprofile|*.key|*.pcap|*.pcapng|*.DS_Store|*.xcuserstate) continue ;;
-  esac
-  destination="$public_repository/$source_path"
-  /bin/mkdir -p "${destination:h}"
-  /bin/cp "$root/$source_path" "$destination"
-done < <(git ls-files -z)
-
 # Prepare the public GitHub Pages content. The stable installer path is used by
 # the download button, while versioned ZIPs remain available for app updates.
-site_downloads="$public_repository/docs/downloads"
+site_downloads="$root/docs/downloads"
 mkdir -p "$site_downloads"
 /bin/cp "$root/MacRemoteServer/dist/Mac-Remote.pkg" "$site_downloads/Mac-Remote.pkg"
 /bin/cp "$root/MacRemoteServer/dist/Mac-Remote-${version}.zip" "$site_downloads/Mac-Remote-${version}.zip"
-/bin/cp "$root/MacRemoteServer/dist/update.json" "$public_repository/docs/update.json"
+/bin/cp "$root/MacRemoteServer/dist/update.json" "$root/docs/update.json"
 
-git -C "$public_repository" add -A
-if ! git -C "$public_repository" diff --cached --quiet; then
-  git -C "$public_repository" commit -m "Publish Mac Remote ${version} (${build})"
+git add docs/downloads/Mac-Remote.pkg "docs/downloads/Mac-Remote-${version}.zip" docs/update.json
+if ! git diff --cached --quiet; then
+  git commit -m "Publish Mac Remote ${version} (${build})"
 fi
+# Tag the finished release, including the exact files served by GitHub Pages.
+git tag -a "$tag" -m "Mac Remote ${version} (${build})"
 
 cat <<EOF
 
-Release prepared successfully in both local repositories.
+Release prepared successfully in this repository.
 
-The release is still local and unpublished. To push all three refs, type
+The release is still local and unpublished. To push the commit and tag, type
 exactly: push
 
-# Private source repository
   git push origin HEAD
   git push origin ${tag}
 
-# Public clean-history source and website repository
-  git -C "${public_repository}" push origin HEAD
+GitHub Pages serves the new installer and updater after its deployment finishes.
+Creating a GitHub Release is optional; these downloads are hosted under docs/.
 EOF
 
 if [[ -t 0 ]]; then
-  read -r "push_confirmation?Type 'push' to run all three push commands now (anything else keeps them local): "
+  read -r "push_confirmation?Type 'push' to publish the commit and tag (anything else keeps them local): "
   if [[ "$push_confirmation" == "push" ]]; then
     git push origin HEAD
     git push origin "$tag"
-    git -C "$public_repository" push origin HEAD
-    echo "All three pushes completed."
+    echo "Release commit and tag pushed."
   else
     echo "Nothing was pushed. The prepared release remains local."
   fi
