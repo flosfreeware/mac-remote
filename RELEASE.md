@@ -31,6 +31,8 @@ notarizes them, verifies the installer signature, and prepares:
 - `docs/downloads/Mac-Remote-VERSION.zip`: the Mac updater's download.
 - `docs/update.json`: the update manifest.
 
+The download button's displayed version is updated alongside these files.
+
 It commits those website files and tags the completed release. If signing or
 notarization fails before the tag is created, rerun with the same version/build
 to resume the saved notarization submission.

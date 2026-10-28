@@ -81,8 +81,9 @@ mkdir -p "$site_downloads"
 /bin/cp "$root/MacRemoteServer/dist/Mac-Remote.pkg" "$site_downloads/Mac-Remote.pkg"
 /bin/cp "$root/MacRemoteServer/dist/Mac-Remote-${version}.zip" "$site_downloads/Mac-Remote-${version}.zip"
 /bin/cp "$root/MacRemoteServer/dist/update.json" "$root/docs/update.json"
+MACREMOTE_RELEASE_VERSION="$version" /usr/bin/perl -0pi -e 's{(<span id="download-version">)[^<]*(</span>)}{$1 . $ENV{MACREMOTE_RELEASE_VERSION} . $2}ge or die "Homepage download version marker is missing\n"' "$root/docs/index.html"
 
-git add docs/downloads/Mac-Remote.pkg "docs/downloads/Mac-Remote-${version}.zip" docs/update.json
+git add docs/index.html docs/downloads/Mac-Remote.pkg "docs/downloads/Mac-Remote-${version}.zip" docs/update.json
 if ! git diff --cached --quiet; then
   git commit -m "Publish Mac Remote ${version} (${build})"
 fi
