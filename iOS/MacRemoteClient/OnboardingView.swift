@@ -175,7 +175,7 @@ struct OnboardingView: View {
                     .multilineTextAlignment(.center)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
-                Link("Download Mac Remote", destination: URL(string: "https://covyy.github.io/mac-remote-site/")!)
+                Link("Download Mac Remote", destination: URL(string: "https://flosfreeware.github.io/mac-remote/")!)
                     .font(.headline)
                 if remote.hasSecret {
                     Text("Your Mac is already paired.")

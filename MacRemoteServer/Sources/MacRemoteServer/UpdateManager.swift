@@ -31,7 +31,7 @@ final class UpdateManager {
         case failed(String)
     }
 
-    private let feedURL = URL(string: "https://covyy.github.io/mac-remote-site/update.json")!
+    private let feedURL = URL(string: "https://flosfreeware.github.io/mac-remote/update.json")!
     private let installSafetyCheck: (@escaping (Bool) -> Void) -> Void
     private let statusChanged: (Status) -> Void
     private var stagedAppURL: URL?

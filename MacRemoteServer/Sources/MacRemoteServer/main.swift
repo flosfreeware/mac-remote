@@ -293,7 +293,7 @@ private final class FirstRunSetupController: NSWindowController {
     }
 
     @objc private func openSecurityCommitments() {
-        guard let url = URL(string: "https://github.com/covyy/mac-remote-site/blob/main/security.md") else { return }
+        guard let url = URL(string: "https://github.com/flosfreeware/mac-remote/blob/main/docs/security.md") else { return }
         NSWorkspace.shared.open(url)
     }
 

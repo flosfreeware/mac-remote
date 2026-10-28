@@ -12,7 +12,7 @@ fi
 download_url="${1:-}"
 if [[ -z "$download_url" ]]; then
   echo "Usage: $0 <future-public-zip-url>" >&2
-  echo "Example: $0 https://covyy.github.io/mac-remote-site/downloads/Mac-Remote-1.1.zip" >&2
+  echo "Example: $0 https://flosfreeware.github.io/mac-remote/downloads/Mac-Remote-1.1.zip" >&2
   exit 2
 fi
 : "${CODESIGN_IDENTITY:?Set CODESIGN_IDENTITY to a Developer ID Application certificate.}"

@@ -1,0 +1,9 @@
+{
+  "version": "1.1.5",
+  "build": 8,
+  "protocol_version": 1,
+  "accepted_protocol_minimum": 1,
+  "accepted_protocol_maximum": 1,
+  "download_url": "https://flosfreeware.github.io/mac-remote/downloads/Mac-Remote-1.1.5.zip",
+  "sha256": "315c70a8261ae3dce4f8ad94731edff2c0f6f05bf9a168f659aadc44057df43b"
+}
