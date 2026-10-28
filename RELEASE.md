@@ -32,6 +32,9 @@ notarizes them, verifies the installer signature, and prepares:
 - `docs/update.json`: the update manifest.
 
 The download button's displayed version is updated alongside these files.
+The command also restores the download button if downloads were withdrawn.
+Production builds strip debug paths before signing, and both the updater app
+and installer payload are checked for local machine paths before publication.
 
 It commits those website files and tags the completed release. If signing or
 notarization fails before the tag is created, rerun with the same version/build

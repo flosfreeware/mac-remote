@@ -3,7 +3,5 @@
   "build": 9,
   "protocol_version": 1,
   "accepted_protocol_minimum": 1,
-  "accepted_protocol_maximum": 1,
-  "download_url": "https://flosfreeware.github.io/mac-remote/downloads/Mac-Remote-1.1.6.zip",
-  "sha256": "5da73ea89bd12733d79ef88fb711a7744d2d8cdb848e5ad47e026d2b08723f0a"
+  "accepted_protocol_maximum": 1
 }

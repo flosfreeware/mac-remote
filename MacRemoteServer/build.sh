@@ -3,11 +3,24 @@ set -euo pipefail
 
 root="${0:A:h}"
 cd "$root"
-swift build -c release
+build_args=(-c release)
+if [[ "${RELEASE_BUILD:-0}" == "1" ]]; then
+  build_args+=(-Xswiftc -debug-prefix-map -Xswiftc "$root=."
+               -Xswiftc -file-prefix-map -Xswiftc "$root=.")
+fi
+swift build "${build_args[@]}"
 app="$root/build/Mac Remote.app"
 rm -rf "$app"
 mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources"
 cp "$root/.build/release/MacRemoteServer" "$app/Contents/MacOS/MacRemoteServer"
+if [[ "${RELEASE_BUILD:-0}" == "1" ]]; then
+  # Remove debugger/object-file paths before signing the distributable binary.
+  /usr/bin/strip -S "$app/Contents/MacOS/MacRemoteServer"
+  if LC_ALL=C /usr/bin/grep -aEq '/Users/[^/[:space:]]+/|/private/(var/folders|tmp)/|/var/folders/' "$app/Contents/MacOS/MacRemoteServer"; then
+    echo "Release binary contains local machine paths; refusing to sign it." >&2
+    exit 1
+  fi
+fi
 cp "$root/Info.plist" "$app/Contents/Info.plist"
 find "$root/.build" -path '*/Products/Release/*.bundle' -type d -exec cp -R {} "$app/Contents/Resources/" \;
 # Keep Mac branding independent of the iPhone app icon. This PNG is rendered

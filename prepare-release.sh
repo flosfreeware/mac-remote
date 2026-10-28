@@ -81,7 +81,7 @@ mkdir -p "$site_downloads"
 /bin/cp "$root/MacRemoteServer/dist/Mac-Remote.pkg" "$site_downloads/Mac-Remote.pkg"
 /bin/cp "$root/MacRemoteServer/dist/Mac-Remote-${version}.zip" "$site_downloads/Mac-Remote-${version}.zip"
 /bin/cp "$root/MacRemoteServer/dist/update.json" "$root/docs/update.json"
-MACREMOTE_RELEASE_VERSION="$version" /usr/bin/perl -0pi -e 's{(<span id="download-version">)[^<]*(</span>)}{$1 . $ENV{MACREMOTE_RELEASE_VERSION} . $2}ge or die "Homepage download version marker is missing\n"' "$root/docs/index.html"
+MACREMOTE_RELEASE_VERSION="$version" /usr/bin/perl -0pi -e 's{<a class="download"[^>]*>.*?</a>}{qq{<a class="download" href="https://flosfreeware.github.io/mac-remote/downloads/Mac-Remote.pkg">Download for macOS (<span id="download-version">$ENV{MACREMOTE_RELEASE_VERSION}</span>)</a>}}se or die "Homepage download button is missing\n"' "$root/docs/index.html"
 
 git add docs/index.html docs/downloads/Mac-Remote.pkg "docs/downloads/Mac-Remote-${version}.zip" docs/update.json
 if ! git diff --cached --quiet; then

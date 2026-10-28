@@ -14,7 +14,8 @@
       h1 { margin: 0; font-size: clamp(2.5rem, 8vw, 4.25rem); letter-spacing: -0.065em; }
       .intro { margin: 18px auto 32px; max-width: 460px; color: #a1a1a6; font-size: 1.15rem; line-height: 1.5; }
       .download { display: inline-block; padding: 14px 22px; border-radius: 999px; background: #0a84ff; color: white; font-weight: 650; text-decoration: none; transition: transform .15s ease, background .15s ease; }
-      .download:hover { background: #2997ff; transform: scale(1.02); }
+      .download[href]:hover { background: #2997ff; transform: scale(1.02); }
+      .download[aria-disabled="true"] { background: #363638; color: #a1a1a6; }
       .note { margin: 16px 0 0; color: #86868b; font-size: .9rem; }
       footer { margin-top: 72px; font-size: .85rem; color: #86868b; }
       footer a { color: #b4d6ff; text-decoration: none; }
@@ -26,7 +27,7 @@
       <img class="icon" src="app-icon.svg" alt="Mac Remote app icon">
       <h1>Mac Remote</h1>
       <p class="intro">Use your iPhone as a simple, responsive remote for your Mac.</p>
-      <a class="download" href="https://flosfreeware.github.io/mac-remote/downloads/Mac-Remote.pkg">Download for macOS (<span id="download-version">1.1.6</span>)</a>
+      <a class="download" aria-disabled="true">Download temporarily unavailable</a>
       <p class="note">The iPhone app is available on the App Store.</p>
       <footer>
         <a href="privacy.html">Privacy Policy</a>

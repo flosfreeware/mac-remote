@@ -39,6 +39,16 @@ app_upload="$notary_state_directory/${version}-${build}-app-upload.zip"
 
 /usr/bin/codesign --verify --deep --strict --verbose=2 "$app"
 
+verify_no_local_paths() {
+  local release_file
+  while IFS= read -r -d '' release_file; do
+    if LC_ALL=C /usr/bin/grep -aEq '/Users/[^/[:space:]]+/|/private/(var/folders|tmp)/|/var/folders/' "$release_file"; then
+      echo "Release contains local machine paths: $release_file" >&2
+      exit 1
+    fi
+  done < <(/usr/bin/find "$1" -type f -print0)
+}
+
 restore_pending_artifact() {
   local artifact="$1"
   local kind="$2"
@@ -124,6 +134,7 @@ if [[ ! -d "$notarized_app" ]]; then
   echo "Could not extract the app archive for notarization." >&2
   exit 1
 fi
+verify_no_local_paths "$notarized_app"
 notarize_artifact "$app_upload" app "$notarized_app"
 /usr/bin/xcrun stapler validate "$notarized_app"
 /usr/bin/codesign --verify --deep --strict --verbose=2 "$notarized_app"
@@ -145,6 +156,9 @@ restore_pending_artifact "$pkg" pkg
 notarize_artifact "$pkg" pkg
 /usr/sbin/spctl --assess --type install "$pkg"
 /usr/sbin/pkgutil --check-signature "$pkg"
+# Verify the installer payload too, including any resumed cached package.
+/usr/sbin/pkgutil --expand-full "$pkg" "$app_stage/installer-payload"
+verify_no_local_paths "$app_stage/installer-payload"
 # The website serves this stable name from docs/downloads/ through GitHub Pages.
 # The versioned package remains in dist for archival and diagnostics.
 /bin/cp "$pkg" "$stable_pkg"
