@@ -1,0 +1,9 @@
+{
+  "name": "mac-remote-tools",
+  "private": true,
+  "scripts": {
+    "dev": "./rebuild-install.sh",
+    "dev:setup": "defaults delete local.macremote.server completedFirstRunSetup 2>/dev/null || true; pnpm dev",
+    "release": "./release.sh"
+  }
+}

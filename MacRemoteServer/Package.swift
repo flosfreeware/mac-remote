@@ -1,0 +1,14 @@
+// swift-tools-version: 5.9
+import PackageDescription
+
+let package = Package(
+    name: "MacRemoteServer",
+    platforms: [.macOS(.v14)],
+    products: [.executable(name: "MacRemoteServer", targets: ["MacRemoteServer"])],
+    targets: [
+        .executableTarget(
+            name: "MacRemoteServer",
+            resources: [.process("Resources")]
+        )
+    ]
+)

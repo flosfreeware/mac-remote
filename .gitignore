@@ -1,0 +1,42 @@
+# macOS
+.DS_Store
+
+# Swift Package Manager and build output
+.build/
+.swiftpm/
+build/
+MacRemoteServer/dist/
+MacRemoteServer/.release-state/
+DerivedData/
+# Machine-specific signing identity names and Keychain profile (no credentials)
+.release-config.sh
+
+# JavaScript package manager dependencies and local store
+node_modules/
+.pnpm-store/
+
+# Per-user Xcode state
+xcuserdata/
+*.xcuserstate
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Local signing material and environment secrets
+*.p12
+*.pfx
+*.mobileprovision
+*.provisionprofile
+*.key
+.env
+.env.*
+!.env.example
+
+# Machine-specific diagnostic traces and reports
+diagnostics/*.json
+diagnostics/*.jsonl
+diagnostics/*.csv
+diagnostics/*.md
+*.pcap
+*.pcapng
