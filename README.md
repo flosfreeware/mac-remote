@@ -1,3 +1,5 @@
+[Download for Mac](https://flosfreeware.github.io/mac-remote/)
+
 1. On the Mac, run `cd MacRemoteServer && ./build.sh`, then open `build/Mac Remote.app` and grant Accessibility when prompted.
 2. Click the menu-bar icon and scan the displayed one-time pairing QR code (or copy its pairing code). Closing the pairing window invalidates it; use **Decouple iPhone** in the same menu before pairing a different phone.
 3. Open `iOS/MacRemoteClient.xcodeproj` in Xcode, select an iOS 17+ device, choose a signing team, and run it.
