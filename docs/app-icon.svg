@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="145 25 400 400" role="img" aria-label="Mac Remote app icon">
+  <rect x="145" y="25" width="400" height="400" fill="#000"/>
+  <g transform="translate(340 220) scale(1.04) translate(-359.5 -201)">
+    <g transform="rotate(35 340 230)">
+      <rect x="285" y="115" width="110" height="230" rx="36" fill="#fff"/>
+      <circle cx="340" cy="170" r="27" fill="#000"/><circle cx="340" cy="170" r="11" fill="#fff"/>
+      <circle cx="340" cy="228" r="9" fill="#000"/><circle cx="316" cy="262" r="9" fill="#000"/>
+      <circle cx="364" cy="262" r="9" fill="#000"/><circle cx="340" cy="296" r="9" fill="#000"/>
+    </g>
+    <path d="M409.5 96.2 A40 40 0 0 1 442.3 119.1" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round"/>
+    <path d="M411.9 68.3 A68 68 0 0 1 467.6 107.3" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round"/>
+  </g>
+</svg>

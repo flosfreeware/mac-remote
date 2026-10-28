@@ -22,3 +22,7 @@ Open `MacRemoteServer/build/Mac Remote.app`. Allow Accessibility access when pro
 ## Pair
 
 Open **Show Pairing QR Code** from the Mac menu-bar menu, then scan the QR code from the iPhone app. Both devices must be able to reach each other on the local network.
+
+## Website
+
+The GitHub Pages source is in `docs/` (home, privacy, security, and app icon).
